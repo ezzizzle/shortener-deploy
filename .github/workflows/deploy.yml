@@ -30,7 +30,7 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           OAUTH_PROXY_SECRET: ${{ secrets.OAUTH_PROXY_SECRET }}
-        run: cat k8s/secrets.yml | envsubst | kubectl apply
+        run: cat k8s/secrets.yml | envsubst | kubectl apply -f -
 
       - name: Deploy App
         run: kubectl apply -f k8s/oauth2-proxy.yml -f k8s/app.yml -f k8s/ingress.yml
