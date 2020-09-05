@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shortener
+  namespace: ziz
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shortener
+  template:
+    metadata:
+      labels:
+        app: shortener
+    spec:
+      containers:
+      - name: shortener
+        image: ezzizzle/ziz-shortener:latest  # Replace with actual tag
+        imagePullPolicy: Always
+        env:
+          - name: BASE_URL
+            value: https://l.ziz.cx
+          - name: DB_HOST
+            value: shortener-db
+          - name: DB_NAME
+            value: shorten
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: shortener-secret
+                key: POSTGRES_USER
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: shortener-secret
+                key: POSTGRES_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shortener
+  namespace: ziz
+spec:
+  type: NodePort
+  selector:
+    app: shortener
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shortener-db
+  namespace: ziz
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shortener-db
+  template:
+    metadata:
+      labels:
+        app: shortener-db
+    spec:
+      containers:
+      - name: shortener-db
+        image: postgres:12.4-alpine
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: shortener-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: shortener-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          value: shorten
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: db-data
+      volumes:
+      - name: db-data
+        hostPath:
+          path: /data/shortener/db
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shortener-db
+  namespace: ziz
+spec:
+  type: NodePort
+  selector:
+    app: shortener-db
+  ports:
+  - port: 5432
+    targetPort: 5432
