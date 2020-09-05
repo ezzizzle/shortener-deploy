@@ -1,6 +1,6 @@
 # Shortener Deploy
 
-Deploys [ziz-shortner](https://github.com/ezzizzle/ziz-shortener) onto [MicroK8s](https://microk8s.io).
+Deploys [ziz-shortener](https://github.com/ezzizzle/ziz-shortener) onto [MicroK8s](https://microk8s.io).
 
 Deploys the following services:
 
