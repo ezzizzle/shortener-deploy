@@ -23,7 +23,7 @@ jobs:
         run: echo "$KUBECONFIG_CONTENTS" > $HOME/kubeconfig && export KUBECONFIG=$HOME/kubeconfig
 
       - name: Install envsubst
-        run: apt install -y gettext-base
+        run: sudo apt install -y gettext-base
 
       - name: Deploy secrets
         env:
