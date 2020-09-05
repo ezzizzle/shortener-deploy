@@ -20,7 +20,7 @@ jobs:
       - name: Setup kubeconfig
         env:
           KUBECONFIG_CONTENTS: ${{ secrets.KUBECONFIG }}
-        run: echo "$KUBECONFIG_CONTENTS" > /kubeconfig && export KUBECONFIG=/kubeconfig
+        run: echo "$KUBECONFIG_CONTENTS" > $HOME/kubeconfig && export KUBECONFIG=$HOME/kubeconfig
 
       - name: Install envsubst
         run: apt install -y gettext-base
