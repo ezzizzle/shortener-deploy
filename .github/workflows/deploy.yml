@@ -23,7 +23,7 @@ jobs:
       - name: Setup kubeconfig
         env:
           KUBECONFIG_CONTENTS: ${{ secrets.KUBECONFIG }}
-        run: echo "$KUBECONFIG_CONTENTS" > $HOME/kubeconfig && echo "::set-env name=KUBECONFIG::$HOME/kubeconfig"
+        run: echo "$KUBECONFIG_CONTENTS" > $HOME/kubeconfig
 
       - name: Install envsubst
         run: sudo apt install -y gettext-base
@@ -36,4 +36,4 @@ jobs:
         run: cat k8s/secrets.yml | envsubst | kubectl apply -f -
 
       - name: Deploy App
-        run: kubectl apply -f k8s/oauth2-proxy.yml -f k8s/app.yml -f k8s/ingress.yml
+        run: kubectl --kubeconfig $HOME/kubeconfig apply -f k8s/oauth2-proxy.yml -f k8s/app.yml -f k8s/ingress.yml
