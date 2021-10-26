@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: shortener-ingress
@@ -18,17 +18,19 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: shortener
-          servicePort: 8000
+          service:
+            name: shortener
+            port:
+              number: 8000
 ---
 # Secure the API behind OAuth
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: shortener-ingress-api
   namespace: ziz
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    # kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-production"
     nginx.ingress.kubernetes.io/rewrite-target: /$1$2$3
@@ -46,10 +48,12 @@ spec:
       paths:
         - path: /(url|api)(/|$)(.*)
           backend:
-            serviceName: shortener
-            servicePort: 8000
+            service:
+              name: shortener
+              port:
+                number: 8000
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: shortener-oauth2-proxy
@@ -61,8 +65,10 @@ spec:
       paths:
       - path: /oauth2
         backend:
-          serviceName: oauth2-proxy-l-ziz-cx
-          servicePort: 4180
+          service:
+            name: oauth2-proxy-l-ziz-cx
+            port:
+              number: 4180
   tls:
   - hosts:
     - l.ziz.cx
